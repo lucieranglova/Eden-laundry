@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eden Laundry — prádlo bez starostí</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:    #FAF6F0;
+    --blush:    #F2C4B8;
+    --sage:     #B5CDB5;
+    --sky:      #B8D4E8;
+    --lilac:    #D4C0E0;
+    --foam:     #E8F4F0;
+    --charcoal: #2C2825;
+    --warm:     #8B6F5E;
+    --accent:   #E8997A;
+    --ink-mid:  #5C3D2E;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--charcoal); overflow-x:hidden; }
+
+  /* ── BUBBLES ── */
+  .bubble-bg { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .bubble { position:absolute; border-radius:50%; opacity:0; animation:floatUp linear infinite; }
+  @keyframes floatUp {
+    0%   { transform:translateY(110vh) scale(.8); opacity:0; }
+    10%  { opacity:.35; }
+    90%  { opacity:.15; }
+    100% { transform:translateY(-10vh) scale(1.1); opacity:0; }
+  }
+
+  /* ── NAV ── */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.2rem 4rem;
+    background:rgba(250,246,240,.9); backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(181,205,181,.3);
+  }
+  .nav-logo {
+    font-family:'Fraunces',serif; font-size:1.5rem; font-weight:300;
+    letter-spacing:-.02em; color:var(--charcoal);
+    display:flex; align-items:center; gap:.55rem;
+  }
+  .logo-icon {
+    width:32px; height:32px; background:var(--sage); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:1rem;
+    animation:spin 9s linear infinite; box-shadow:0 0 0 4px rgba(181,205,181,.3);
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  nav ul { list-style:none; display:flex; gap:2.5rem; }
+  nav a {
+    text-decoration:none; color:var(--warm);
+    font-size:.84rem; font-weight:500; letter-spacing:.05em; text-transform:uppercase;
+    transition:color .2s; position:relative;
+  }
+  nav a::after {
+    content:''; position:absolute; bottom:-3px; left:0;
+    width:0; height:1.5px; background:var(--accent); transition:width .3s;
+  }
+  nav a:hover { color:var(--charcoal); }
+  nav a:hover::after { width:100%; }
+  .nav-cta {
+    background:var(--charcoal) !important; color:var(--cream) !important;
+    padding:.55rem 1.4rem; border-radius:50px;
+    transition:background .2s, transform .2s !important;
+  }
+  .nav-cta::after { display:none !important; }
+  .nav-cta:hover { background:var(--accent) !important; transform:scale(1.04); }
+
+  /* hamburger */
+  .nav-hamburger {
+    display:none; flex-direction:column; gap:5px;
+    cursor:pointer; padding:.4rem; background:none; border:none; z-index:200;
+  }
+  .nav-hamburger span {
+    display:block; width:24px; height:2px;
+    background:var(--charcoal); border-radius:2px;
+    transition:transform .3s, opacity .3s;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity:0; }
+  .nav-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+
+  .nav-drawer {
+    display:none; position:fixed; inset:0; z-index:150;
+    background:rgba(250,246,240,.97); backdrop-filter:blur(16px);
+    flex-direction:column; align-items:center; justify-content:center; gap:2rem;
+  }
+  .nav-drawer.open { display:flex; }
+  .nav-drawer a {
+    font-family:'Fraunces',serif; font-size:2rem; font-weight:300;
+    color:var(--charcoal); text-decoration:none; transition:color .2s;
+  }
+  .nav-drawer a:hover { color:var(--accent); }
+  .nav-drawer .drawer-cta {
+    margin-top:1rem; background:var(--charcoal) !important; color:var(--cream) !important;
+    font-family:'DM Sans',sans-serif; font-size:1rem !important; font-weight:500;
+    padding:.85rem 2rem; border-radius:50px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position:relative; z-index:1;
+    min-height:100vh;
+    display:grid; grid-template-columns:1fr 1fr;
+    align-items:center; gap:2rem;
+    padding:7rem 4rem 4rem;
+    background:linear-gradient(150deg, var(--cream) 40%, var(--foam) 100%);
+  }
+  .hero-content { animation:fadeUp 1s ease both; }
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(28px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:.5rem;
+    background:var(--sage); color:var(--charcoal);
+    font-size:.73rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+    padding:.35rem 1rem; border-radius:50px;
+    margin-bottom:1.8rem; animation:fadeUp 1s .1s ease both;
+  }
+  .hero h1 {
+    font-family:'Fraunces',serif;
+    font-size:clamp(2.8rem,6.5vw,5rem);
+    font-weight:300; line-height:1.07; letter-spacing:-.03em;
+    margin-bottom:1.3rem; animation:fadeUp 1s .2s ease both;
+  }
+  .hero h1 em { font-style:italic; color:var(--accent); }
+  .hero p {
+    font-size:1.05rem; line-height:1.78; color:var(--warm);
+    max-width:440px; margin-bottom:2.5rem; animation:fadeUp 1s .35s ease both;
+  }
+  .hero-btns { display:flex; gap:1rem; flex-wrap:wrap; animation:fadeUp 1s .5s ease both; }
+
+  .btn-primary, .btn-secondary {
+    padding:.85rem 2rem; border-radius:50px;
+    font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:500;
+    cursor:pointer; border:none; transition:transform .2s, box-shadow .2s;
+  }
+  .btn-primary {
+    background:var(--charcoal); color:var(--cream);
+    box-shadow:0 4px 20px rgba(44,40,37,.2);
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(44,40,37,.28); }
+  .btn-secondary {
+    background:transparent; color:var(--charcoal);
+    border:1.5px solid rgba(44,40,37,.22);
+  }
+  .btn-secondary:hover { border-color:var(--charcoal); transform:translateY(-2px); }
+
+  /* ── WASHER HERO VISUAL ── */
+  .hero-visual {
+    display:flex; justify-content:center; align-items:center;
+    width:100%; height:420px;
+    animation:fadeUp 1s .3s ease both;
+  }
+  .washer { width:100%; height:100%; position:relative; }
+  .washer-wrap { position:relative; width:420px; height:420px; flex-shrink:0; }
+  .washer-body {
+    width:310px; height:350px;
+    background:linear-gradient(160deg,#fff 0%,#f0ebe5 100%);
+    border-radius:30px;
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    box-shadow:0 20px 60px rgba(44,40,37,.12), inset 0 2px 0 rgba(255,255,255,.8);
+    border:2px solid rgba(181,205,181,.35);
+  }
+  .washer-drum {
+    width:195px; height:195px; border-radius:50%;
+    background:linear-gradient(135deg,var(--sky) 0%,var(--lilac) 100%);
+    position:absolute; top:76px; left:57px;
+    border:12px solid rgba(255,255,255,.65);
+    box-shadow:inset 0 0 30px rgba(44,40,37,.1), 0 0 0 3px rgba(181,205,181,.3);
+    overflow:hidden; animation:drumSpin 4s ease-in-out infinite;
+  }
+  @keyframes drumSpin { 0%,100% { transform:rotate(0); } 50% { transform:rotate(180deg); } }
+  .drum-inner {
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.3), transparent 60%);
+  }
+  .drum-clothes {
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:3rem; opacity:.65;
+  }
+  .drum-hole {
+    width:18px; height:18px;
+    background:rgba(255,255,255,.4); border-radius:50%; position:absolute;
+  }
+  .drum-hole:nth-child(2) { top:28px; left:36px; }
+  .drum-hole:nth-child(3) { top:46px; right:28px; }
+  .drum-hole:nth-child(4) { bottom:36px; left:28px; }
+  .drum-hole:nth-child(5) { bottom:28px; right:36px; }
+
+  .washer-panel {
+    position:absolute; top:18px; left:26px; right:26px;
+    height:46px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .washer-light {
+    width:11px; height:11px; border-radius:50%;
+    background:var(--sage); box-shadow:0 0 8px var(--sage);
+    animation:blink 2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.25; } }
+  .washer-temp { font-size:.65rem; color:var(--warm); opacity:.6; letter-spacing:.05em; }
+  .washer-dial {
+    width:33px; height:33px; border-radius:50%;
+    background:linear-gradient(135deg,#eee,#ddd);
+    border:2px solid rgba(44,40,37,.1);
+    animation:dialTurn 3.5s ease-in-out infinite; position:relative;
+  }
+  @keyframes dialTurn { 0%,100% { transform:rotate(-20deg); } 50% { transform:rotate(30deg); } }
+  .washer-dial::after {
+    content:''; position:absolute; top:4px; left:50%; transform:translateX(-50%);
+    width:2px; height:9px; background:var(--accent); border-radius:2px;
+  }
+  .washer-footer {
+    position:absolute; bottom:18px; left:26px; right:26px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .washer-knob {
+    width:18px; height:18px; border-radius:50%;
+    background:var(--blush); border:2px solid rgba(44,40,37,.1);
+  }
+  .washer-brand {
+    font-family:'Fraunces',serif; font-size:.9rem;
+    font-weight:300; color:var(--warm); letter-spacing:.06em;
+  }
+
+  .float-tag {
+    position:absolute; background:white;
+    border:1px solid rgba(181,205,181,.4);
+    border-radius:16px; padding:.6rem 1rem;
+    font-size:.78rem; font-weight:500;
+    box-shadow:0 8px 24px rgba(44,40,37,.09);
+    display:flex; align-items:center; gap:.5rem;
+    animation:floatTag 3s ease-in-out infinite; white-space:nowrap;
+    color:var(--charcoal);
+  }
+  @keyframes floatTag { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+  .ft1 { top:14px; right:14px; animation-delay:0s; }
+  .ft2 { bottom:64px; left:14px; animation-delay:1s; }
+  .ft3 { bottom:18px; right:40px; animation-delay:.5s; }
+
+  /* ── TRUST BAR ── */
+  .trust-bar {
+    position:relative; z-index:1;
+    background:var(--charcoal); color:var(--cream);
+    padding:1.8rem 4rem;
+    display:flex; justify-content:space-around; align-items:center;
+    gap:2rem; flex-wrap:wrap;
+  }
+  .trust-item { display:flex; align-items:center; gap:.8rem; }
+  .trust-icon { font-size:1.4rem; }
+  .trust-text { font-size:.85rem; font-weight:500; }
+  .trust-sub { font-size:.74rem; opacity:.55; }
+  .trust-divider { width:1px; height:36px; background:rgba(255,255,255,.15); }
+
+  /* ── SECTIONS ── */
+  .section { position:relative; z-index:1; padding:6rem 4rem; }
+  .section-header { text-align:center; margin-bottom:4rem; }
+  .section-label {
+    display:inline-block; font-size:.72rem; font-weight:500;
+    letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent); margin-bottom:.8rem;
+  }
+  .section-title {
+    font-family:'Fraunces',serif;
+    font-size:clamp(2rem,4vw,3rem);
+    font-weight:300; line-height:1.15; letter-spacing:-.02em;
+  }
+  .section-sub {
+    margin-top:.8rem; font-size:.95rem; color:var(--warm);
+    max-width:520px; margin-left:auto; margin-right:auto; line-height:1.7;
+  }
+
+  /* ── SERVICES ── */
+  .services-grid {
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:1.3rem; max-width:1100px; margin:0 auto;
+  }
+  .service-card {
+    background:white; border-radius:24px; padding:2.2rem 1.8rem;
+    position:relative; overflow:hidden;
+    transition:transform .3s, box-shadow .3s; cursor:pointer;
+    border:1px solid rgba(0,0,0,.04);
+  }
+  .service-card:hover { transform:translateY(-6px); box-shadow:0 20px 50px rgba(44,40,37,.1); }
+  .service-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:4px; border-radius:24px 24px 0 0;
+  }
+  .c1::before { background:linear-gradient(90deg,var(--sky),var(--lilac)); }
+  .c2::before { background:linear-gradient(90deg,var(--blush),var(--accent)); }
+  .c3::before { background:linear-gradient(90deg,var(--sage),var(--sky)); }
+  .c4::before { background:linear-gradient(90deg,var(--sage),#a8d5b5); }
+  .c5::before { background:linear-gradient(90deg,var(--lilac),var(--blush)); }
+  .c6::before { background:linear-gradient(90deg,var(--accent),var(--blush)); }
+
+  .service-icon { font-size:2.2rem; margin-bottom:1.1rem; display:block; }
+  .service-card h3 { font-family:'Fraunces',serif; font-size:1.2rem; font-weight:500; margin-bottom:.5rem; }
+  .service-card p { font-size:.87rem; line-height:1.65; color:var(--warm); }
+  .service-tag {
+    display:inline-block; margin-top:1.2rem;
+    background:var(--foam); border:1px solid rgba(181,205,181,.4);
+    color:var(--warm); font-size:.75rem; font-weight:500;
+    padding:.25rem .75rem; border-radius:50px;
+  }
+
+  /* ── HOW ── */
+  .how-section {
+    background:var(--foam); border-top:1px solid rgba(181,205,181,.3);
+    border-bottom:1px solid rgba(181,205,181,.3);
+    position:relative; z-index:1; padding:6rem 4rem; overflow:hidden;
+  }
+  .how-section::before {
+    content:''; position:absolute; top:-80px; right:-80px;
+    width:300px; height:300px; background:var(--sage);
+    border-radius:50%; opacity:.2; filter:blur(40px);
+  }
+  .steps { display:flex; align-items:flex-start; max-width:1000px; margin:0 auto; position:relative; }
+  .steps::before {
+    content:''; position:absolute; top:32px; left:8%; right:8%;
+    height:2px;
+    background:linear-gradient(90deg,var(--sage),var(--sky),var(--lilac),var(--blush));
+    border-radius:2px; z-index:0;
+  }
+  .step { flex:1; text-align:center; position:relative; z-index:1; padding:0 .8rem; }
+  .step-circle {
+    width:64px; height:64px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.4rem; margin:0 auto 1.2rem; transition:transform .3s;
+  }
+  .step:hover .step-circle { transform:scale(1.1) rotate(5deg); }
+  .step:nth-child(1) .step-circle { background:var(--sage); }
+  .step:nth-child(2) .step-circle { background:var(--sky); }
+  .step:nth-child(3) .step-circle { background:var(--lilac); }
+  .step:nth-child(4) .step-circle { background:var(--blush); }
+  .step:nth-child(5) .step-circle { background:var(--foam); border:2px solid rgba(181,205,181,.5); }
+  .step h4 { font-family:'Fraunces',serif; font-size:.95rem; font-weight:500; margin-bottom:.4rem; }
+  .step p { font-size:.8rem; color:var(--warm); line-height:1.55; }
+
+  /* ── PARTNERSHIP ── */
+  .partner-section { position:relative; z-index:1; padding:6rem 4rem; background:var(--cream); }
+  .partner-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:4rem;
+    max-width:1000px; margin:0 auto; align-items:center;
+  }
+  .partner-text h2 {
+    font-family:'Fraunces',serif; font-size:clamp(1.8rem,3.5vw,2.6rem);
+    font-weight:300; line-height:1.2; letter-spacing:-.02em; margin-bottom:1.2rem;
+  }
+  .partner-text h2 em { font-style:italic; color:var(--accent); }
+  .partner-text p { font-size:.92rem; line-height:1.75; color:var(--warm); margin-bottom:1.8rem; }
+  .partner-list { list-style:none; display:flex; flex-direction:column; gap:.8rem; }
+  .partner-list li {
+    display:flex; align-items:flex-start; gap:.8rem;
+    font-size:.9rem; color:var(--charcoal); line-height:1.5;
+  }
+  .check {
+    width:22px; height:22px; border-radius:50%;
+    background:var(--sage); color:white;
+    display:flex; align-items:center; justify-content:center;
+    font-size:.75rem; flex-shrink:0; margin-top:.05rem;
+  }
+
+  .partner-visual { position:relative; }
+  .contract-card {
+    background:white; border:1px solid rgba(181,205,181,.35);
+    border-radius:24px; padding:2.2rem;
+    box-shadow:0 12px 48px rgba(44,40,37,.08);
+    position:relative; overflow:hidden;
+  }
+  .contract-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg,var(--sage),var(--sky),var(--lilac));
+  }
+  .contract-header {
+    display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.8rem;
+  }
+  .contract-title { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:500; }
+  .contract-badge {
+    background:var(--foam); border:1px solid rgba(181,205,181,.4);
+    color:var(--warm); font-size:.72rem; font-weight:500; padding:.3rem .8rem; border-radius:50px;
+  }
+  .contract-items { display:flex; flex-direction:column; gap:.7rem; margin-bottom:1.8rem; }
+  .ci {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:.7rem 1rem; background:var(--cream); border-radius:10px; font-size:.85rem;
+  }
+  .ci-left { display:flex; align-items:center; gap:.6rem; }
+  .ci-num { font-weight:500; color:var(--charcoal); }
+  .ci-unit { color:var(--warm); font-size:.78rem; }
+  .contract-footer {
+    border-top:1px solid rgba(181,205,181,.3); padding-top:1.2rem;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .contract-freq { font-size:.82rem; color:var(--warm); }
+  .contract-price { font-family:'Fraunces',serif; font-size:1.6rem; font-weight:300; color:var(--accent); }
+
+  .float-chip {
+    position:absolute; background:white; border:1px solid rgba(181,205,181,.4);
+    border-radius:12px; padding:.5rem .9rem; font-size:.76rem; font-weight:500;
+    box-shadow:0 4px 16px rgba(44,40,37,.09);
+    display:flex; align-items:center; gap:.4rem;
+    animation:floatTag 3s ease-in-out infinite; color:var(--charcoal);
+  }
+  .chip1 { bottom:-16px; left:-20px; animation-delay:0s; }
+  .chip2 { top:-14px; right:-14px; animation-delay:.7s; }
+
+  /* ── CALC ── */
+  .calc-section { position:relative; z-index:1; padding:6rem 4rem; background:var(--foam); }
+  .calc-wrapper {
+    max-width:760px; margin:0 auto; background:white;
+    border-radius:32px; padding:3rem;
+    box-shadow:0 8px 40px rgba(44,40,37,.08);
+    border:1px solid rgba(181,205,181,.25);
+  }
+  .calc-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.4rem; flex-wrap:wrap; gap:1rem; }
+  .calc-title { font-family:'Fraunces',serif; font-size:1.8rem; font-weight:300; color:var(--charcoal); }
+  .calc-freq-wrap { display:flex; gap:.5rem; flex-wrap:wrap; }
+  .freq-btn {
+    padding:.35rem .9rem; border-radius:50px; font-size:.78rem; font-weight:500;
+    border:1.5px solid rgba(181,205,181,.5); background:transparent; color:var(--warm);
+    cursor:pointer; transition:all .2s;
+  }
+  .freq-btn.active { background:var(--charcoal); border-color:var(--charcoal); color:var(--cream); }
+  .calc-sub { color:var(--warm); font-size:.87rem; margin-bottom:2rem; }
+
+  .calc-items { display:flex; flex-direction:column; gap:.8rem; margin-bottom:2rem; }
+  .calc-row {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.9rem 1.1rem; background:var(--cream);
+    border:1px solid rgba(181,205,181,.3); border-radius:14px; gap:1rem;
+    transition:border-color .2s;
+  }
+  .calc-row:hover { border-color:var(--sage); }
+  .calc-row-left { display:flex; align-items:center; gap:.8rem; }
+  .calc-emoji { font-size:1.3rem; }
+  .calc-item-name { font-size:.88rem; font-weight:500; color:var(--charcoal); }
+  .calc-item-price { font-size:.76rem; color:var(--warm); }
+
+  .qty-control { display:flex; align-items:center; gap:.6rem; }
+  .qty-btn {
+    width:32px; height:32px; border-radius:50%;
+    border:1.5px solid rgba(44,40,37,.18); background:white; color:var(--charcoal);
+    cursor:pointer; font-size:1rem;
+    display:flex; align-items:center; justify-content:center; transition:all .2s;
+  }
+  .qty-btn:hover { background:var(--charcoal); border-color:var(--charcoal); color:white; }
+  .qty-num { min-width:28px; text-align:center; font-weight:500; color:var(--charcoal); }
+
+  .calc-summary {
+    background:var(--charcoal); border-radius:18px; padding:1.4rem 1.8rem;
+    margin-bottom:1.5rem; color:var(--cream);
+    display:grid; grid-template-columns:1fr 1px 1fr 1px 1fr; gap:1rem; align-items:center;
+  }
+  .cs-block { text-align:center; }
+  .cs-label { font-size:.72rem; opacity:.6; text-transform:uppercase; letter-spacing:.06em; }
+  .cs-value { font-family:'Fraunces',serif; font-size:1.6rem; font-weight:300; color:var(--blush); margin-top:.2rem; }
+  .cs-divider { width:1px; height:40px; background:rgba(255,255,255,.15); justify-self:center; }
+
+  .calc-cta {
+    width:100%; padding:1rem; border-radius:50px;
+    background:var(--accent); color:white; border:none;
+    font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:500;
+    cursor:pointer; transition:background .2s, transform .2s;
+    box-shadow:0 4px 20px rgba(232,153,122,.35);
+  }
+  .calc-cta:hover { background:#d4845f; transform:scale(1.02); }
+
+  /* ── REVIEWS ── */
+  .reviews-section {
+    background:var(--charcoal); color:var(--cream);
+    padding:6rem 4rem; position:relative; z-index:1; overflow:hidden;
+  }
+  .reviews-section .section-title { color:var(--cream); }
+  .reviews-section .section-label { color:var(--blush); }
+  .reviews-track-wrap { overflow:hidden; margin-top:3rem; }
+  .reviews-track {
+    display:flex; gap:1.3rem;
+    animation:scrollReviews 40s linear infinite; width:max-content;
+  }
+  @keyframes scrollReviews { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+  .reviews-track:hover { animation-play-state:paused; }
+  .review-card {
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);
+    border-radius:20px; padding:1.7rem 1.9rem;
+    min-width:300px; max-width:300px; flex-shrink:0;
+  }
+  .review-stars { color:var(--blush); font-size:.85rem; margin-bottom:.8rem; }
+  .review-text { font-size:.86rem; line-height:1.65; opacity:.82; margin-bottom:1.2rem; font-style:italic; }
+  .review-author { display:flex; align-items:center; gap:.8rem; }
+  .review-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; }
+  .review-name { font-size:.83rem; font-weight:500; }
+  .review-role { font-size:.72rem; opacity:.5; }
+
+  /* ── CTA ── */
+  .cta-section {
+    position:relative; z-index:1; padding:8rem 4rem; text-align:center;
+    background:var(--cream); overflow:hidden;
+  }
+  .cta-blob {
+    position:absolute; border-radius:50%; filter:blur(70px); opacity:.3; pointer-events:none;
+  }
+  .blob1 { width:400px; height:400px; background:var(--blush); top:-50px; left:-100px; }
+  .blob2 { width:300px; height:300px; background:var(--sage); bottom:-50px; right:-50px; }
+  .cta-section h2 {
+    font-family:'Fraunces',serif; font-size:clamp(2.5rem,5vw,4rem);
+    font-weight:300; line-height:1.1; letter-spacing:-.03em;
+    max-width:580px; margin:0 auto 1.5rem;
+  }
+  .cta-section p { color:var(--warm); max-width:420px; margin:0 auto 2.5rem; line-height:1.7; }
+  .cta-note { font-size:.82rem; color:var(--warm); margin-top:1rem; opacity:.7; }
+
+  /* ── FOOTER ── */
+  footer {
+    background:var(--charcoal); color:var(--cream);
+    padding:2.5rem 4rem; position:relative; z-index:1;
+    display:flex; justify-content:space-between; align-items:center; gap:2rem; flex-wrap:wrap;
+  }
+  .footer-logo { font-family:'Fraunces',serif; font-size:1.3rem; font-weight:300; }
+  .footer-links { display:flex; gap:2rem; list-style:none; }
+  .footer-links a { color:rgba(250,246,240,.4); text-decoration:none; font-size:.82rem; transition:color .2s; }
+  .footer-links a:hover { color:var(--blush); }
+  .footer-copy { font-size:.75rem; opacity:.3; }
+
+  /* ── REVEAL ── */
+  .reveal { opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.visible { opacity:1; transform:none; }
+
+  /* ════════════════════════════════════════
+     RESPONSIVE
+  ════════════════════════════════════════ */
+
+  /* MacBook 13" Retina ≤ 1440 */
+  @media (max-width:1440px) {
+    nav { padding:1.1rem 3rem; }
+    .hero { padding:6rem 3rem 4rem; gap:1.5rem; }
+    .hero-visual { height:380px; }
+    .washer-wrap { width:360px; height:360px; }
+    .washer-body { width:280px; height:320px; }
+    .washer-drum { width:175px; height:175px; top:68px; left:52px; }
+    .section { padding:5rem 3rem; }
+    .how-section,.partner-section,.calc-section,.reviews-section,.cta-section { padding:5rem 3rem; }
+    .trust-bar { padding:1.8rem 3rem; }
+    footer { padding:2.5rem 3rem; }
+  }
+
+  /* iPad landscape ≤ 1024 */
+  @media (max-width:1024px) {
+    nav { padding:1rem 2rem; }
+    nav ul { gap:1.6rem; }
+    nav a { font-size:.78rem; }
+
+    .hero {
+      grid-template-columns:1fr;
+      justify-items:center; text-align:center;
+      min-height:auto; padding:7rem 2rem 4rem; gap:2.5rem;
+    }
+    .hero p { max-width:520px; margin-left:auto; margin-right:auto; }
+    .hero-btns { justify-content:center; }
+    .hero-visual { height:380px; }
+    .washer-wrap { width:360px; height:360px; }
+    .washer-body { width:280px; height:320px; }
+    .washer-drum { width:175px; height:175px; top:68px; left:52px; }
+    .ft1,.ft2,.ft3 { display:none; }
+
+    .trust-bar { padding:1.5rem 2rem; gap:1rem; }
+    .trust-divider { display:none; }
+
+    .section { padding:4.5rem 2rem; }
+    .services-grid { grid-template-columns:repeat(2,1fr); }
+
+    .how-section { padding:4.5rem 2rem; }
+    .steps { flex-wrap:wrap; gap:2rem; }
+    .steps::before { display:none; }
+    .step { flex:0 0 calc(33.333% - 1.5rem); }
+
+    .partner-section { padding:4.5rem 2rem; }
+    .partner-grid { grid-template-columns:1fr; gap:3rem; }
+    .partner-visual { max-width:520px; }
+    .float-chip { display:none; }
+
+    .calc-section { padding:4.5rem 2rem; }
+    .calc-wrapper { padding:2.2rem; }
+    .calc-top { flex-direction:column; align-items:flex-start; }
+
+    .reviews-section { padding:4.5rem 2rem; }
+    .cta-section { padding:5rem 2rem; }
+    footer { padding:2rem; flex-direction:column; text-align:center; }
+    .footer-links { flex-wrap:wrap; justify-content:center; gap:1.2rem; }
+  }
+
+  /* iPad portrait ≤ 820 */
+  @media (max-width:820px) {
+    nav ul { display:none; }
+    .nav-hamburger { display:flex; }
+    nav { padding:1rem 1.5rem; }
+
+    .hero { padding:5.5rem 1.5rem 3rem; gap:2rem; }
+    .hero h1 { font-size:clamp(2.4rem,7vw,3.8rem); }
+    .hero p { font-size:.97rem; }
+    .hero-visual { height:340px; }
+    .washer-wrap { width:320px; height:320px; }
+    .washer-body { width:250px; height:285px; }
+    .washer-drum { width:155px; height:155px; top:60px; left:47px; }
+
+    .trust-bar { flex-direction:column; align-items:flex-start; gap:1rem; padding:1.5rem; }
+
+    .section { padding:4rem 1.5rem; }
+    .services-grid { grid-template-columns:1fr 1fr; gap:1rem; }
+    .service-card { padding:1.6rem 1.3rem; }
+
+    .how-section { padding:4rem 1.5rem; }
+    .step { flex:0 0 calc(50% - 1rem); }
+
+    .partner-section { padding:4rem 1.5rem; }
+    .calc-section { padding:4rem 1.5rem; }
+    .calc-summary { grid-template-columns:1fr; gap:.6rem; }
+    .cs-divider { width:100%; height:1px; justify-self:stretch; }
+
+    .reviews-section { padding:4rem 1.5rem; }
+    .cta-section { padding:4rem 1.5rem; }
+    .cta-section h2 { font-size:clamp(2rem,6vw,3rem); }
+  }
+
+  /* iPhone Pro Max ≤ 480 */
+  @media (max-width:480px) {
+    nav { padding:.9rem 1.2rem; }
+    .nav-logo { font-size:1.2rem; }
+    .logo-icon { width:28px; height:28px; font-size:.85rem; }
+
+    .hero { padding:5rem 1.2rem 2.5rem; gap:2rem; }
+    .hero-badge { font-size:.67rem; }
+    .hero h1 { font-size:clamp(2.1rem,9vw,2.9rem); }
+    .hero p { font-size:.92rem; margin-bottom:2rem; }
+    .hero-btns { flex-direction:column; }
+    .btn-primary,.btn-secondary { width:100%; text-align:center; }
+    .hero-visual { height:280px; }
+    .washer-wrap { width:280px; height:280px; }
+    .washer-body { width:220px; height:252px; }
+    .washer-drum { width:136px; height:136px; top:52px; left:42px; }
+    .drum-clothes { font-size:2.2rem; }
+
+    .trust-bar { padding:1.2rem; gap:.8rem; }
+    .trust-text { font-size:.8rem; }
+    .trust-sub { font-size:.7rem; }
+
+    .section { padding:3.5rem 1.2rem; }
+    .section-title { font-size:1.7rem !important; }
+    .services-grid { grid-template-columns:1fr; }
+    .service-card { padding:1.5rem 1.3rem; }
+
+    .how-section { padding:3.5rem 1.2rem; }
+    .steps { gap:1.5rem; }
+    .step { flex:0 0 100%; }
+    .step-circle { width:54px; height:54px; font-size:1.2rem; }
+
+    .partner-section { padding:3.5rem 1.2rem; }
+    .partner-text h2 { font-size:1.6rem; }
+    .contract-card { padding:1.4rem; }
+    .contract-title { font-size:.95rem; }
+    .contract-price { font-size:1.3rem; }
+    .contract-footer { flex-direction:column; align-items:flex-start; gap:.5rem; }
+
+    .calc-section { padding:3.5rem 1.2rem; }
+    .calc-wrapper { padding:1.4rem; border-radius:22px; }
+    .calc-title { font-size:1.4rem !important; }
+    .calc-row { padding:.75rem .9rem; }
+    .calc-item-name { font-size:.82rem; }
+    .qty-btn { width:36px; height:36px; font-size:1.1rem; }
+    .cs-value { font-size:1.35rem; }
+
+    .reviews-section { padding:3.5rem 1.2rem; }
+    .review-card { min-width:260px; max-width:260px; padding:1.3rem 1.4rem; }
+
+    .cta-section { padding:3.5rem 1.2rem; }
+    .cta-section h2 { font-size:1.9rem; }
+    .cta-section p { font-size:.88rem; }
+
+    footer { padding:1.8rem 1.2rem; }
+    .footer-logo { font-size:1.1rem; }
+    .footer-links { gap:.8rem; }
+    .footer-links a { font-size:.78rem; }
+  }
+
+  /* iPhone 17 ≤ 393 */
+  @media (max-width:393px) {
+    .hero h1 { font-size:1.95rem; }
+    .washer-wrap { width:250px; height:250px; }
+    .washer-body { width:196px; height:226px; }
+    .washer-drum { width:122px; height:122px; top:48px; left:37px; }
+    .section-title { font-size:1.55rem !important; }
+    .partner-text h2 { font-size:1.45rem; }
+    .cta-section h2 { font-size:1.7rem; }
+    .calc-title { font-size:1.25rem !important; }
+    .review-card { min-width:240px; max-width:240px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bubble-bg" id="bubbles"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-icon">🫧</div>
+    Eden Laundry
+  </div>
+  <ul>
+    <li><a href="#sluzby">Služby</a></li>
+    <li><a href="#spoluprace">Spolupráce</a></li>
+    <li><a href="#cenik">Kalkulačka</a></li>
+    <li><a href="#kontakt" class="nav-cta">Domluvit schůzku</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE DRAWER -->
+<div class="nav-drawer" id="navDrawer">
+  <a href="#sluzby" onclick="closeDrawer()">Služby</a>
+  <a href="#spoluprace" onclick="closeDrawer()">Spolupráce</a>
+  <a href="#cenik" onclick="closeDrawer()">Kalkulačka</a>
+  <a href="#kontakt" class="drawer-cta" onclick="closeDrawer()">Domluvit schůzku</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <span class="hero-badge">🏨 Pro hotely, penziony & restaurace</span>
+    <h1>Čisté prádlo.<br><em>Každý den.</em><br>Bez starostí.</h1>
+    <p>Zajišťujeme profesionální praní prádla pro ubytovací a restaurační zařízení po celé Praze. Dlouhodobé partnerství, spolehlivé dodávky, férovné ceny.</p>
+    <div class="hero-btns">
+      <button class="btn-primary">Domluvit nezávaznou schůzku</button>
+      <button class="btn-secondary">Zjistit více →</button>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="washer-wrap">
+      <div class="washer">
+        <div class="washer-body">
+          <div class="washer-panel">
+            <div class="washer-light"></div>
+            <span class="washer-temp">90°C · HOTEL</span>
+            <div class="washer-dial"></div>
+          </div>
+          <div class="washer-drum">
+            <div class="drum-inner"></div>
+            <div class="drum-clothes">👕</div>
+            <div class="drum-hole"></div>
+            <div class="drum-hole"></div>
+            <div class="drum-hole"></div>
+            <div class="drum-hole"></div>
+          </div>
+          <div class="washer-footer">
+            <div class="washer-knob"></div>
+            <div class="washer-brand">Eden</div>
+            <div class="washer-knob" style="background:var(--sky)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="float-tag ft1">🏨 40+ hotelů v Praze</div>
+      <div class="float-tag ft2">⚡ Hotovo za 24h</div>
+      <div class="float-tag ft3">⭐ 4.9 / 5 hvězd</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar reveal">
+  <div class="trust-item">
+    <div class="trust-icon">🏨</div>
+    <div><div class="trust-text">40+ partnerů</div><div class="trust-sub">Hotely & restaurace v Praze</div></div>
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <div class="trust-icon">🔄</div>
+    <div><div class="trust-text">Pravidelné dodávky</div><div class="trust-sub">Dle vašeho harmonogramu</div></div>
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <div class="trust-icon">📋</div>
+    <div><div class="trust-text">Smlouva na míru</div><div class="trust-sub">Flexibilní podmínky</div></div>
+  </div>
+  <div class="trust-divider"></div>
+  <div class="trust-item">
+    <div class="trust-icon">🌿</div>
+    <div><div class="trust-text">Eco certifikace</div><div class="trust-sub">Šetrné k tkaninám i přírodě</div></div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="section" id="sluzby">
+  <div class="section-header reveal">
+    <div class="section-label">Co zajišťujeme</div>
+    <h2 class="section-title">Veškeré hotelové prádlo<br>pod jednou střechou.</h2>
+    <p class="section-sub">Specializujeme se na ubytovací provoz — víme, co hotelové prádlo potřebuje a jak ho udržet v perfektním stavu co nejdéle.</p>
+  </div>
+  <div class="services-grid reveal">
+    <div class="service-card c1">
+      <span class="service-icon">🛏️</span>
+      <h3>Ložní prádlo</h3>
+      <p>Prostěradla, povlečení, chrániče matrací. Praní při 60–90 °C s hygienickými přísadami pro bezpečný pobyt vašich hostů.</p>
+      <span class="service-tag">Hygienická norma ✓</span>
+    </div>
+    <div class="service-card c2">
+      <span class="service-icon">🛁</span>
+      <h3>Koupelnové prádlo</h3>
+      <p>Ručníky, osušky, župany, předložky. Měkké, nadýchané, bílé — přesně jak to hosté v hotelovém pokoji čekají.</p>
+      <span class="service-tag">Bělení bez poškození ✓</span>
+    </div>
+    <div class="service-card c3">
+      <span class="service-icon">🌬️</span>
+      <h3>Peřiny & polštáře</h3>
+      <p>Sezónní praní a dezinfekce přikrývek a polštářů. Prodloužíme životnost vašeho vybavení a zajistíme hygienický standard.</p>
+      <span class="service-tag">Dezinfekce ✓</span>
+    </div>
+    <div class="service-card c4">
+      <span class="service-icon">🍽️</span>
+      <h3>Restaurační textil</h3>
+      <p>Ubrusy, ubrousky, zástěry. Škrobení a mandlování pro dokonalý vzhled vašeho stravovacího provozu.</p>
+      <span class="service-tag">Škrobení & mandl ✓</span>
+    </div>
+    <div class="service-card c5">
+      <span class="service-icon">🚐</span>
+      <h3>Svoz & rozvoz</h3>
+      <p>Pravidelný odvoz špinavého a dovoz čistého prádla přímo do vašeho hotelu. Harmonogram nastavíme přesně podle vašich potřeb.</p>
+      <span class="service-tag">Praha & okolí ✓</span>
+    </div>
+    <div class="service-card c6">
+      <span class="service-icon">📊</span>
+      <h3>Evidence & reporting</h3>
+      <p>Sledujeme počty kusů, stav prádla a signalizujeme opotřebení. Víte vždy přesně, co kde je a co je třeba doplnit.</p>
+      <span class="service-tag">Online přehled ✓</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="jak">
+  <div class="section-header reveal">
+    <div class="section-label">Jak spolupráce funguje</div>
+    <h2 class="section-title">Od první schůzky<br>po roky spokojenosti.</h2>
+  </div>
+  <div class="steps reveal">
+    <div class="step">
+      <div class="step-circle">☕</div>
+      <h4>Nezávazná schůzka</h4>
+      <p>Seznámíme se, zjistíme vaše potřeby a objem prádla.</p>
+    </div>
+    <div class="step">
+      <div class="step-circle">📋</div>
+      <h4>Nabídka na míru</h4>
+      <p>Připravíme individuální ceník a harmonogram svozu.</p>
+    </div>
+    <div class="step">
+      <div class="step-circle">🤝</div>
+      <h4>Smlouva & start</h4>
+      <p>Podepíšeme smlouvu a nastavíme první pravidelný svoz.</p>
+    </div>
+    <div class="step">
+      <div class="step-circle">🔄</div>
+      <h4>Pravidelné dodávky</h4>
+      <p>Čisté prádlo dorazí vždy v dohodnutý čas, bez výjimky.</p>
+    </div>
+    <div class="step">
+      <div class="step-circle">📈</div>
+      <h4>Roste s vámi</h4>
+      <p>Kapacitu a frekvenci upravíme kdykoli dle sezóny.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="calc-section" id="cenik">
+  <div class="section-header reveal">
+    <div class="section-label">Orientační kalkulačka</div>
+    <h2 class="section-title">Kolik by stála<br>spolupráce s vámi?</h2>
+    <p class="section-sub">Zadejte přibližné týdenní objemy a frekvenci. Přesnou nabídku vám připravíme na míru po první schůzce.</p>
+  </div>
+  <div class="calc-wrapper reveal">
+    <div class="calc-top">
+      <div>
+        <h3 class="calc-title">Kalkulačka provozu 🧺</h3>
+        <p class="calc-sub">Počty kusů za jeden svozový cyklus</p>
+      </div>
+      <div>
+        <div style="font-size:.75rem;color:var(--warm);margin-bottom:.4rem;">Frekvence svozu</div>
+        <div class="calc-freq-wrap">
+          <button class="freq-btn" onclick="setFreq(1,this)">1× týdně</button>
+          <button class="freq-btn active" onclick="setFreq(2,this)">2× týdně</button>
+          <button class="freq-btn" onclick="setFreq(3,this)">3× týdně</button>
+        </div>
+      </div>
+    </div>
+    <div class="calc-items" id="calcItems"></div>
+    <div class="calc-summary">
+      <div class="cs-block">
+        <div class="cs-label">Cena za svoz</div>
+        <div class="cs-value" id="pricePerPickup">0 Kč</div>
+      </div>
+      <div class="cs-divider"></div>
+      <div class="cs-block">
+        <div class="cs-label">Měsíčně</div>
+        <div class="cs-value" id="priceMonth">0 Kč</div>
+      </div>
+      <div class="cs-divider"></div>
+      <div class="cs-block">
+        <div class="cs-label">Kusů / měsíc</div>
+        <div class="cs-value" id="piecesMonth">0</div>
+      </div>
+    </div>
+    <button class="calc-cta" onclick="orderNow()">Domluvit nezávaznou schůzku →</button>
+    <p style="text-align:center;font-size:.78rem;color:var(--warm);margin-top:.8rem;opacity:.7">Orientační ceny. Finální nabídku sestavíme po konzultaci vašeho provozu.</p>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews-section">
+  <div class="section-header reveal">
+    <div class="section-label">Co říkají partneři</div>
+    <h2 class="section-title">Hotely, které nám důvěřují.</h2>
+  </div>
+  <div class="reviews-track-wrap">
+    <div class="reviews-track" id="reviewsTrack"></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="kontakt">
+  <div class="cta-blob blob1"></div>
+  <div class="cta-blob blob2"></div>
+  <h2 class="reveal">Začněme spolu.<br><em style="font-style:italic;color:var(--accent)">Bez závazku.</em></h2>
+  <p class="reveal">Domluvte si 30minutovou nezávaznou schůzku. Prohlédneme si váš provoz, probereme potřeby a připravíme nabídku přesně pro vás.</p>
+  <button class="btn-primary reveal" style="font-size:1.05rem;padding:1rem 2.4rem;">Domluvit schůzku 🫧</button>
+  <p class="cta-note reveal">Nebo nám napište: info@edenlaundry.cz · +420 777 123 456</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Eden Laundry</div>
+  <ul class="footer-links">
+    <li><a href="#">Služby</a></li>
+    <li><a href="#">Spolupráce</a></li>
+    <li><a href="#">Reference</a></li>
+    <li><a href="#">Kontakt</a></li>
+    <li><a href="#">GDPR</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 Eden Laundry s.r.o.</div>
+</footer>
+
+<script>
+// BUBBLES
+const bubbleColors = ['#B5CDB5','#F2C4B8','#B8D4E8','#D4C0E0','#E8F4F0'];
+const bg = document.getElementById('bubbles');
+for (let i = 0; i < 18; i++) {
+  const b = document.createElement('div');
+  b.className = 'bubble';
+  const size = 20 + Math.random() * 65;
+  b.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;background:${bubbleColors[i%bubbleColors.length]};animation-duration:${10+Math.random()*15}s;animation-delay:${Math.random()*-25}s;border:1px solid rgba(255,255,255,.5);`;
+  bg.appendChild(b);
+}
+
+// CALC
+const items = [
+  { emoji:'🛏️', name:'Prostěradla & povlečení', unit:'ks', price:28 },
+  { emoji:'🛁', name:'Ručníky & osušky',         unit:'ks', price:18 },
+  { emoji:'🌬️', name:'Peřiny',                   unit:'ks', price:95 },
+  { emoji:'💤', name:'Polštáře',                  unit:'ks', price:65 },
+  { emoji:'🍽️', name:'Ubrusy & ubrousky',        unit:'ks', price:22 },
+  { emoji:'🩴', name:'Župany & předložky',        unit:'ks', price:45 },
+];
+const quantities = new Array(items.length).fill(0);
+let freqPerWeek = 2;
+
+function setFreq(f, btn) {
+  freqPerWeek = f;
+  document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateSummary();
+}
+
+function renderCalc() {
+  const c = document.getElementById('calcItems');
+  c.innerHTML = '';
+  items.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'calc-row';
+    row.innerHTML = `
+      <div class="calc-row-left">
+        <span class="calc-emoji">${item.emoji}</span>
+        <div><div class="calc-item-name">${item.name}</div><div class="calc-item-price">${item.price} Kč / ks / svoz</div></div>
+      </div>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="changeQty(${i},-10)">−</button>
+        <div class="qty-num" id="qty-${i}">0</div>
+        <button class="qty-btn" onclick="changeQty(${i},10)">+</button>
+      </div>`;
+    c.appendChild(row);
+  });
+}
+
+function changeQty(i, d) {
+  quantities[i] = Math.max(0, quantities[i] + d);
+  document.getElementById(`qty-${i}`).textContent = quantities[i];
+  updateSummary();
+}
+
+function updateSummary() {
+  const perPickup = items.reduce((s, item, i) => s + item.price * quantities[i], 0);
+  const perMonth  = Math.round(perPickup * freqPerWeek * 4.33);
+  const piecesMonth = Math.round(quantities.reduce((s,q) => s+q,0) * freqPerWeek * 4.33);
+  document.getElementById('pricePerPickup').textContent = perPickup.toLocaleString('cs') + ' Kč';
+  document.getElementById('priceMonth').textContent = perMonth.toLocaleString('cs') + ' Kč';
+  document.getElementById('piecesMonth').textContent = piecesMonth.toLocaleString('cs');
+}
+
+function orderNow() {
+  const total = items.reduce((s,item,i) => s + item.price * quantities[i], 0);
+  if (!total) { alert('Zadejte prosím přibližné objemy prádla 😊'); return; }
+  alert('Skvělé! Ozveme se vám do 24 hodin a domluvíme nezávaznou schůzku. 🫧');
+}
+renderCalc();
+
+// REVIEWS
+const reviews = [
+  { text:'S Eden spolupracujeme dva roky. Prádlo vždy přijde v dohodnutý čas a kvalita je bezchybná. Pro naše hosty je to znát.', name:'Markéta Horáčková', role:'Manažerka, Boutique Hotel Malá Strana', color:'#B5CDB5', emoji:'🏨' },
+  { text:'Jako penzion s 18 pokoji jsme hledali spolehlivého partnera. Eden splnil všechna naše očekávání a cena je fér.', name:'Pavel Šimánek', role:'Majitel, Penzion U Hradu', color:'#B8D4E8', emoji:'🏡' },
+  { text:'Oceňujeme flexibilitu — v létě svozy 4× týdně, v zimě méně. Nikdy jsme neřešili, že by prádlo chybělo.', name:'Lucie Dvořáčková', role:'Operations Manager, Hotel Centrum', color:'#D4C0E0', emoji:'⭐' },
+  { text:'Evidence kusů a reporty jsou skvělé. Víme přesně, kdy nakoupit nové vybavení. Šetří nám to peníze i čas.', name:'Tomáš Kratochvíl', role:'Ředitel, Riverside Apartments', color:'#F2C4B8', emoji:'📊' },
+  { text:'Přešli jsme od konkurence a rozdíl je vidět — prádlo voní čistě, bez přepáleného praní. Hosté si pochvalují.', name:'Jana Procházková', role:'Recepční, Hotel Praha Garden', color:'#B5CDB5', emoji:'🌿' },
+  { text:'Komunikace je jednoduše výborná. Vždy rychlá reakce, žádné problémy. Doporučuju každému ubytování.', name:'Martin Beneš', role:'Majitel, Apartmány Vinohrady', color:'#B8D4E8', emoji:'💙' },
+];
+const track = document.getElementById('reviewsTrack');
+[...reviews, ...reviews].forEach(r => {
+  const card = document.createElement('div');
+  card.className = 'review-card';
+  card.innerHTML = `
+    <div class="review-stars">★★★★★</div>
+    <p class="review-text">"${r.text}"</p>
+    <div class="review-author">
+      <div class="review-avatar" style="background:${r.color}">${r.emoji}</div>
+      <div><div class="review-name">${r.name}</div><div class="review-role">${r.role}</div></div>
+    </div>`;
+  track.appendChild(card);
+});
+
+// SCROLL REVEAL
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold:0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// HAMBURGER
+const hamburger = document.getElementById('hamburger');
+const navDrawer = document.getElementById('navDrawer');
+hamburger.addEventListener('click', () => {
+  const isOpen = navDrawer.classList.toggle('open');
+  hamburger.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
+function closeDrawer() {
+  navDrawer.classList.remove('open');
+  hamburger.classList.remove('open');
+  document.body.style.overflow = '';
+}
+</script>
+</body>
+</html>
